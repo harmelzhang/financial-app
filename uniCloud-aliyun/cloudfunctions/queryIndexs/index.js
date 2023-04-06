@@ -15,7 +15,7 @@ exports.main = async (event, context) => {
 	var data = resp.data.data
 	
 	var result = []
-	var indexCodes = ["000001", "399001", "399006", "000300", "000905", "000688"]
+	var indexCodes = ["000001", "399001", "399006", "000300", "000905", "000688", "899050"]
 	indexCodes.forEach(function(code){
 		for(var i = 0; i < data.length; i++) {
 			if(code == data[i].indexCode) {
