@@ -1,0 +1,9 @@
+{
+  "name": "wxAutoReply",
+  "dependencies": {
+    "xml2js": "^0.4.23"
+  },
+  "extensions": {
+    "uni-cloud-jql": {}
+  }
+}
