@@ -8,5 +8,7 @@
 // 数据库查询有最大返回条数限制，详见：https://uniapp.dcloud.net.cn/uniCloud/cf-database.html#limit
 // 详细JQL语法，请参考：https://uniapp.dcloud.net.cn/uniCloud/jql.html
 
-// 下面示例查询uni-id-users表的所有数据
-db.collection('uni-id-users').get();
+
+db.collection("category").remove();
+db.collection("category_stock_code").remove();
+db.collection("index_sample").remove();
