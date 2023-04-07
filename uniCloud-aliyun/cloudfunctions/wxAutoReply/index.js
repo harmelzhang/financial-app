@@ -2,10 +2,10 @@
 
 const xml2js = require('xml2js');
 
-const token = "xxx";
+const token = "FTH46g5h56r";
 
-const appId = "xxx"
-const appSecret = "xxx"
+const appId = "wx7e487bf86d7a08b5"
+const appSecret = "4424a59f65ed32e86585058e539bf17b"
 
 exports.main = async (event, context) => {
 	var msgType = ""
