@@ -3,30 +3,37 @@ exports.main = async (event, context) => {
 	var result = {"success": false, "data": []}
 
 	const resp = await uniCloud.httpclient.request(
-		"https://www.csindex.com.cn/csindex-home/quotes/index-press",
+		"https://42.push2.eastmoney.com/api/qt/clist/get?pn=1&pz=50&fltt=2&fs=b:MK0010&fields=f2,f3,f4,f12,f14",
 		{
 			method: "GET",
 			dataType: "json"
 		}
 	)
 
-	if(resp.status != 200 || resp.data.code != "200") {
+	if(resp.status != 200) {
 		return result
 	}
 	
-	var data = resp.data.data
+	var data = resp.data.data.diff
 
-	var indexCodes = ["000001", "399001", "399006", "000300", "000905", "000688", "899050"]
+	var items = []
+	var codes = []
+	Object.keys(data).forEach(function(key) {
+		var item = data[key]
+		items.push({
+			"name": item.f14,
+			"point": item.f2,
+			"change": item.f4,
+			"percent": item.f3
+		})
+		codes.push(item.f12)
+	})
+
+	var indexCodes = ["000001", "399001", "399006", "000300", "000905", "000016", "000688", "899050"]
 	indexCodes.forEach(function(code) {
-		for(var i = 0; i < data.length; i++) {
-			if(code == data[i].indexCode) {
-				result.data.push({
-					"name": data[i].indexName,
-					"point": data[i].current,
-					"change": data[i].change,
-					"percent": data[i].changePct
-				})
-			}
+		var index = codes.indexOf(code)
+		if(index != -1) {
+			result.data.push(items[index])
 		}
 	})
 	result.success = true
