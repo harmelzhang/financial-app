@@ -1,0 +1,7 @@
+{
+  "name": "queryStockByCode",
+  "dependencies": {},
+  "extensions": {
+    "uni-cloud-jql": {}
+  }
+}
