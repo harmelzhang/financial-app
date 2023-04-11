@@ -12,3 +12,8 @@
 db.collection("category").remove();
 db.collection("category_stock_code").remove();
 db.collection("index_sample").remove();
+
+db.collection("stock").remove();
+db.collection("financial").remove();
+
+db.collection("user").remove();
