@@ -33,7 +33,7 @@ exports.main = async (event, context) => {
 		return `<xml><ToUserName><![CDATA[${fromUser}]]></ToUserName><FromUserName><![CDATA[${toUser}]]></FromUserName><CreateTime>${createTime}</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA[${result}]]></Content></xml>`
 	} else if(msgType === "event") {
 		if(eventInfo === "subscribe") {
-			var result = "您好，感谢关注【周大高】，这里主要提供热门公司的财务报表分析，由于目前小程序还在开发中，暂时在公众号发布“图说财报”系列文章，后续小程序上线后会停止更新，转而发布个人对财报以及市场行情的分析，来了就请坐下吧\n\n小提示：公众号回复公司名称会提示其主营业务哦"
+			var result = "您好，感谢关注「周大高」，这里主要提供热门公司的财务报表分析。由于目前小程序还在开发中，暂时在公众号发布“图说财报”系列文章，后续小程序上线后会停止更新，转而发布个人对财报以及市场行情的分析。来了就请坐下吧！\n\n小提示：公众号回复公司名称会提示其主营业务哦"
 			return `<xml><ToUserName><![CDATA[${fromUser}]]></ToUserName><FromUserName><![CDATA[${toUser}]]></FromUserName><CreateTime>${createTime}</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA[${result}]]></Content></xml>`
 		}
 	}
