@@ -1,0 +1,7 @@
+{
+  "name": "markStock",
+  "dependencies": {},
+  "extensions": {
+    "uni-cloud-jql": {}
+  }
+}

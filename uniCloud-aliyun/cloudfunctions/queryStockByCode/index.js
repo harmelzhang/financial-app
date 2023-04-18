@@ -10,7 +10,7 @@ exports.main = async (event, context) => {
 		result.success = true
 		result.data = queryResp.data[0]
 	}
-	
+
 	queryResp = await dbJQL.collection("index_sample").where(`stock_code=='${code}'`).orderBy("type_code").get()
 	if(queryResp.code == 0 && queryResp.affectedDocs != 0) {
 		var indexs = []
