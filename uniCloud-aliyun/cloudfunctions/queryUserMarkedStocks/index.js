@@ -5,10 +5,8 @@ exports.main = async (event, context) => {
 	const openid = event.openid || event.queryStringParameters.openid
 	const dbJQL = uniCloud.databaseForJQL({event, context})
 
-	var queryResp = await dbJQL.collection("stock_favorites").where(`openid=='${openid}'`).orderBy("create_time desc").get()
-	
-	console.log(queryResp)
-	
+	var queryResp = await dbJQL.collection("stock_favorites").where(`openid=="${openid}"`).orderBy("create_time desc").get()
+
 	if(queryResp.code == 0 && queryResp.affectedDocs != 0) {
 		result.success = true
 		queryResp.data.forEach(function(item) {

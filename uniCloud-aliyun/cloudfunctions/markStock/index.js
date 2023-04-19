@@ -7,7 +7,7 @@ exports.main = async (event, context) => {
 
 	const dbJQL = uniCloud.databaseForJQL({event, context})
 
-	var queryResp = await dbJQL.collection("stock").where(`code=='${stockCode}'`).limit(1).get()
+	var queryResp = await dbJQL.collection("stock").where(`code=="${stockCode}"`).limit(1).get()
 
 	var stock = null
 	if(queryResp.code == 0 && queryResp.affectedDocs != 0) {

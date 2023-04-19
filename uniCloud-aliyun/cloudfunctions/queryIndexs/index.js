@@ -36,7 +36,7 @@ exports.main = async (event, context) => {
 			result.data.push(items[index])
 		}
 	})
-	result.success = true
 
+	result.success = true
 	return result
 };
