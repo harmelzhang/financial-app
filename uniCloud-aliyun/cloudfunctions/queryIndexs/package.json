@@ -1,7 +1,0 @@
-{
-  "name": "queryIndexs",
-  "dependencies": {},
-  "extensions": {
-    "uni-cloud-jql": {}
-  }
-}

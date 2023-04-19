@@ -1,7 +1,0 @@
-{
-  "name": "queryMarketTrends",
-  "dependencies": {},
-  "extensions": {
-    "uni-cloud-jql": {}
-  }
-}
