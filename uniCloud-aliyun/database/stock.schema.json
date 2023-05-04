@@ -10,6 +10,96 @@
 	"properties": {
 		"_id": {
 			"description": "ID，系统自动生成"
+		},
+		"code": {
+			"title": "代码",
+			"bsonType": "string",
+			"description": "股票代码"
+		},
+		"stock_name": {
+			"title": "名称",
+			"bsonType": "string",
+			"description": "股票名称"
+		},
+		"stock_name_pinyin": {
+			"title": "名称拼音",
+			"bsonType": "string",
+			"description": "股票名称拼音首字母"
+		},
+		"stock_before_name": {
+			"title": "曾用名称",
+			"bsonType": "string",
+			"description": "股票曾用名称"
+		},
+		"company_name": {
+			"title": "公司名称",
+			"bsonType": "string",
+			"description": "公司名称"
+		},
+		"company_type": {
+			"title": "公司类型",
+			"bsonType": "string",
+			"description": "公司类型（证券、银行、保险、通用）"
+		},
+		"company_type_code": {
+			"title": "公司类型代码",
+			"bsonType": "string",
+			"description": "公司类型（1、2、3、4）"
+		},
+		"company_profile": {
+			"title": "公司简介",
+			"bsonType": "string",
+			"description": "公司简介"
+		},
+		"region": {
+			"title": "地域",
+			"bsonType": "string",
+			"description": "地域（省份）"
+		},
+		"address": {
+			"title": "办公地址",
+			"bsonType": "string",
+			"description": "办公地址"
+		},
+		"website": {
+			"title": "公司网站",
+			"bsonType": "string",
+			"description": "公司网站"
+		},
+		"main_business": {
+			"title": "主营业务",
+			"bsonType": "string",
+			"description": "主营业务"
+		},
+		"business_scope": {
+			"title": "经营范围",
+			"bsonType": "string",
+			"description": "经营范围"
+		},
+		"date_of_incorporation": {
+			"title": "成立日期",
+			"bsonType": "date",
+			"description": "成立日期"
+		},
+		"listing_date": {
+			"title": "上市日期",
+			"bsonType": "date",
+			"description": "上市日期"
+		},
+		"law_firm": {
+			"title": "律师事务所",
+			"bsonType": "string",
+			"description": "律师事务所"
+		},
+		"accounting_firm": {
+			"title": "会计师事务所",
+			"bsonType": "string",
+			"description": "会计师事务所"
+		},
+		"market_place": {
+			"title": "交易市场",
+			"bsonType": "string",
+			"description": "交易市场（上海、深圳、北京）"
 		}
 	}
 }

@@ -10,6 +10,37 @@
 	"properties": {
 		"_id": {
 			"description": "ID，系统自动生成"
+		},
+		"type": {
+			"title": "分类类型",
+			"bsonType": "string",
+			"description": "分类类型（证券会、中证）"
+		},
+		"id": {
+			"title": "ID",
+			"bsonType": "string",
+			"description": "行业ID"
+		},
+		"name": {
+			"title": "名称",
+			"bsonType": "string",
+			"description": "行业名称"
+		},
+		"level": {
+			"title": "层级",
+			"bsonType": "string",
+			"description": "显示层级"
+		},
+		"display_order": {
+			"title": "顺序",
+			"bsonType": "int",
+			"description": "显示顺序"
+		},
+		"parent_id": {
+			"title": "父ID",
+			"bsonType": "string",
+			"parentKey": "id",
+			"description": "父行业ID"
 		}
 	}
 }

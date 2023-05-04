@@ -10,6 +10,21 @@
 	"properties": {
 		"_id": {
 			"description": "ID，系统自动生成"
+		},
+		"type": {
+			"title": "分类类型",
+			"bsonType": "string",
+			"description": "分类类型（证券会、中证）"
+		},
+		"category_id": {
+			"title": "行业ID",
+			"bsonType": "string",
+			"description": "行业ID"
+		},
+		"stock_code": {
+			"title": "股票代码",
+			"bsonType": "string",
+			"description": "股票代码"
 		}
 	}
 }

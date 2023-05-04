@@ -1,6 +1,6 @@
 {
     "name" : "financial-app",
-    "appid" : "",
+    "appid" : "__UNI__AE8C73A",
     "description" : "",
     "versionName" : "1.0.0",
     "versionCode" : "100",
@@ -50,7 +50,7 @@
     "quickapp" : {},
     /* 小程序特有相关 */
     "mp-weixin" : {
-        "appid" : "",
+        "appid" : "wx25ff88267a796f8b",
         "setting" : {
             "urlCheck" : false
         },

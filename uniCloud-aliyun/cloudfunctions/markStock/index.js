@@ -21,10 +21,7 @@ exports.main = async (event, context) => {
 	// 插入数据
 	await dbJQL.collection("stock_favorites").add({
 		"openid": openid,
-		"stock": {
-			"code": stock.code,
-			"name": stock.stock_name
-		}
+		"stocks": stock.code
 	})
 
 	result.success = true

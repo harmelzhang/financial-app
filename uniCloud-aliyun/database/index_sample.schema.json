@@ -10,6 +10,21 @@
 	"properties": {
 		"_id": {
 			"description": "ID，系统自动生成"
+		},
+		"type_code": {
+			"title": "类型代码",
+			"bsonType": "string",
+			"description": "类型代码（中证指数，www.csindex.com.cn）"
+		},
+		"type_name": {
+			"title": "类型名称",
+			"bsonType": "string",
+			"description": "类型名称（沪深300、中证500、上证50....）"
+		},
+		"stock_code": {
+			"title": "股票代码",
+			"bsonType": "string",
+			"description": "股票代码"
 		}
 	}
 }

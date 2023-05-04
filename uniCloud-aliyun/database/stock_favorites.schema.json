@@ -16,21 +16,10 @@
         "bsonType": "string",
         "description": "用户ID"
     },
-	"stock": {
+	"stocks": {
 		"title": "股票",
-		"bsonType": "object",
-		"properties": {
-			"code": {
-			    "title": "代码",
-			    "bsonType": "string",
-			    "description": "股票代码"
-			},
-			"name": {
-			    "title": "名称",
-			    "bsonType": "string",
-			    "description": "股票名称"
-			}
-		},
+		"bsonType": "string",
+		"foreignKey": "stock.code",
 		"description": "股票信息"
 	},
     "create_time": {

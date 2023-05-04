@@ -26,13 +26,28 @@
 		    "bsonType": "string",
 		    "description": "头像地址"
 		},
-		"create_time": {
-		    "title": "创建时间",
+		"join_time": {
+		    "title": "加入时间",
 		    "bsonType": "int",
-		    "description": "用户标记时的时间戳",
+		    "description": "用户首次登陆时的时间戳",
 			"forceDefaultValue": {
 				"$env": "now"
 			}
+		},
+		"level": {
+			"title": "会员等级",
+			"bsonType": "int",
+			"description": "会员等级（0：注册会员、1：普通会员、2：黄金会员、3：钻石会员）"
+		},
+		"level_expire_date": {
+			"title": "过期日期",
+			"bsonType": "date",
+			"description": "会员过期日期（截止到当天晚上24时）"
+		},
+		"enable_notify": {
+			"title": "消息通知",
+			"bsonType": "bool",
+			"description": "是否开启消息通知"
 		}
 	}
 }

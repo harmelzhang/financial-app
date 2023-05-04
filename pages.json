@@ -1,17 +1,104 @@
 {
-	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+	"pages": [
+		// 首页
 		{
-			"path": "pages/index/index",
+			"path": "pages/index/index"  // 首页
+		},
+		{
+			"path": "pages/index/search",  // 搜索
 			"style": {
-				"navigationBarTitleText": "uni-app"
+				"navigationBarTitleText": "搜索",
+				"navigationBarBackgroundColor": "#FFFFFF",
+				"navigationBarTextStyle": "black"
 			}
+		},
+
+		// 自选
+		{
+			"path": "pages/favorite/favorite"  // 列表
+		},
+
+		// 选股
+		{
+			"path": "pages/filter/filter"  // 列表
+		},
+
+		// 我的
+		{
+			"path": "pages/user/user",  // 用户
+			"style": {
+				"navigationBarTitleText": "个人中心"
+			}
+		},
+		{
+			"path": "pages/user/shop",  // 积分兑换
+			"style": {
+				"navigationBarTitleText": "积分兑换"
+			}
+		},
+		{
+			"path": "pages/user/coupon",  // 券码兑换
+			"style": {
+				"navigationBarTitleText": "券码兑换"
+			}
+		},
+		{
+			"path": "pages/user/order",  // 我的订单
+			"style": {
+				"navigationBarTitleText": "我的订单"
+			}
+		},
+		{
+			"path": "pages/user/setting",  // 用户配置
+			"style": {
+				"navigationBarTitleText": "用户配置"
+			}
+		},
+		{
+			"path": "pages/user/login"  // 用户登录
+		},
+
+		// 通用
+		{
+			"path": "pages/common/webview"  // WebView
 		}
-	],
+    ],
+	"tabBar": {
+		"color": "#333333",
+		"selectedColor": "#333333",
+		"borderStyle": "black",
+		"backgroundColor": "#FFFFFF",
+		"list": [
+			{
+				"pagePath": "pages/index/index",
+				"text": "首页",
+				"iconPath": "static/tabbar/home.png",
+				"selectedIconPath": "static/tabbar/home_selected.png"
+			},
+			{
+				"pagePath": "pages/favorite/favorite",
+				"text": "自选",
+				"iconPath": "static/tabbar/favorite.png",
+				"selectedIconPath": "static/tabbar/favorite_selected.png"
+			},
+			{
+				"pagePath": "pages/filter/filter",
+				"text": "选股",
+				"iconPath": "static/tabbar/filter.png",
+				"selectedIconPath": "static/tabbar/filter_selected.png"
+			},
+			{
+				"pagePath": "pages/user/user",
+				"text": "我的",
+				"iconPath": "static/tabbar/user.png",
+				"selectedIconPath": "static/tabbar/user_selected.png"
+			}
+		]
+	},
 	"globalStyle": {
-		"navigationBarTextStyle": "black",
-		"navigationBarTitleText": "uni-app",
-		"navigationBarBackgroundColor": "#F8F8F8",
-		"backgroundColor": "#F8F8F8"
+		"navigationBarTextStyle": "white",
+		"navigationBarTitleText": "图说财报",
+		"navigationBarBackgroundColor": "#FFC100"
 	},
 	"uniIdRouter": {}
 }
