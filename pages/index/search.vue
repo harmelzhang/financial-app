@@ -2,7 +2,10 @@
 	<view class="search">
 		<view class="input">
 			<image class="icon" src="/static/index/search.png"></image>
-			<input class="tip" type="text" placeholder="请输入股票名称或代码" v-on:input="input"/>
+			<input class="tip" type="text" placeholder="请输入股票名称或代码" v-on:input="input" v-bind:value="inputValue"/>
+			<view class="clear" v-show="inputValue != ''" v-on:click="clearInput">
+				<image src="/static/common/close.png"></image>
+			</view>
 		</view>
 		<view class="btn" v-on:click="toIndex">
 			<text>取消</text>
@@ -58,26 +61,50 @@
 					"深圳": "#FF6E3F",
 					"北京": "#FF4848"
 				},
+				inputValue: "",
 				stocks: []
 			}
 		},
 		methods: {
+			clearInput() {
+				this.inputValue = ""
+				this.stocks = []
+			},
 			toIndex() {
 				uni.switchTab({
 					url: "/pages/index/index"
 				})
 			},
 			input(event) {
+				const that = this
 				let value = event.detail.value.trim()
 				if(value == "") {
 					this.stocks = []
+					this.inputValue = ""
 					return
 				}
-				this.stocks = [
-					{code: "600031", name: "三一重工", market: "上海"},
-					{code: "000001", name: "平安银行", market: "深圳"},
-					{code: "830946", name: "森萱医药", market: "北京"}
-				]
+				this.inputValue = value
+				// 查询数据库
+				const db = uniCloud.database()
+				const dbCmd = db.command
+				let res = db.collection("stock").where(
+					dbCmd.or(
+						{"code": new RegExp(value, "g")},
+						{"stock_name": new RegExp(value, "g")},
+					)
+				).orderBy("code").limit(10).get().then((res) => {
+					if(res.result.affectedDocs > 0) {
+						let data = []
+						res.result.data.forEach(function(item) {
+							data.push({
+								"code": item.code,
+								"name": item.stock_name,
+								"market": item.market_place
+							})
+						})
+						that.stocks = data
+					}
+				})
 			},
 			deleteHistoryRecord() {
 				console.log(">>")
@@ -113,8 +140,14 @@
 			.tip {
 				width: 85%;
 				margin-left: 2pt;
-				color: #A8A8A8;
 				font-size: 10pt;
+			}
+			.clear {
+				padding: 4pt 4pt 0pt 4pt;
+				image {
+					width: 16pt;
+					height: 16pt;
+				}
 			}
 		}
 		.btn {
@@ -144,10 +177,10 @@
 			}
 			.code {
 				margin-left: 8pt;
+				color: #6D6D6D;
 			}
 			.name {
 				margin-left: 8pt;
-				color: #6d6d6d;
 			}
 		}
 	}
@@ -192,7 +225,7 @@
 				margin-top: 8pt;
 				background-color: #F8F8F8;
 				border-radius: 4pt;
-				color: #6d6d6d;
+				color: #6D6D6D;
 				font-size: 10pt;
 				padding: 2pt 4pt;
 			}

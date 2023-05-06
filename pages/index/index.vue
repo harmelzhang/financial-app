@@ -31,6 +31,7 @@
 			<image class="help" src="/static/common/help.png"></image>
 		</view>
 		<view class="content">
+			<qiun-data-charts type="column" v-bind:opts="marketOverviewOpts" v-bind:chart-data="marketOverviewData"/>
 		</view>
 	</view>
 	
@@ -45,6 +46,24 @@
 </template>
 
 <script>
+	// 查询市场状态（是否开盘）
+	function queryMarketStatus() {
+		const now = new Date()
+		
+		const day = now.getDay()
+		if(day == 0 || day == 6) {
+			return false
+		}
+		
+		const currentHour = now.getHours()
+		const currentMinute = now.getMinutes()
+		if((currentHour >= 0 && currentHour <=8) || currentHour == 12 || currentHour >= 15 || (currentHour == 11 && currentMinute >= 30)) {
+			return false
+		}
+		
+		return true
+	}
+
 	// 查询主要指数涨跌信息
 	function queryIndexs(that) {
 		var result = []
@@ -80,43 +99,54 @@
 	}
 
 	// 查询市场涨跌情况
-	function queryMarketTrends() {
-		var result = {
-			"increased": 0,
-			"decreased": 0,
-			"unchanged": 0,
-			"data": []
-		}
+	function queryMarketTrends(that) {
+		// var result = {
+		// 	"increased": 0,
+		// 	"decreased": 0,
+		// 	"unchanged": 0,
+		// 	"data": []
+		// }
 
 		uni.request({
 			url: "https://datacenter.eastmoney.com/securities/api/data/v1/get?reportName=RPTAAA_DMSK_TS_CHANGESTATISTICS&source=securities&client=APP",
 			success(res) {
 				var data = res.data.result.data[0]
 
-				result.increased = data.IND1
-				result.decreased = data.IND2
-				result.unchanged = data.INDEX5
+				// result.increased = data.IND1
+				// result.decreased = data.IND2
+				// result.unchanged = data.INDEX5
 
 				// 构建 key 和 name 的关系
 				var names = [
-					{"name": "涨停", "key": "IND3"},
-					{"name": ">5%", "key": "INDEX8"},
-					{"name": "5~1%", "key": "INDEX7"},
-					{"name": "1~0%", "key": "INDEX6"},
-					{"name": "平", "key": "INDEX5"},
-					{"name": "0~1%", "key": "INDEX4"},
-					{"name": "1~5%", "key": "INDEX3"},
-					{"name": ">5%", "key": "INDEX2"},
-					{"name": "跌停", "key": "IND5"},
+					{"name": "涨停", "key": "IND3", "color": "#F05656"},
+					{"name": ">5%", "key": "INDEX8", "color": "#F05656"},
+					{"name": "5-1%", "key": "INDEX7", "color": "#F05656"},
+					{"name": "1-0%", "key": "INDEX6", "color": "#F05656"},
+					{"name": "平", "key": "INDEX5", "color": "#A8A8A8"},
+					{"name": "0-1%", "key": "INDEX4", "color": "#3DB364"},
+					{"name": "1-5%", "key": "INDEX3", "color": "#3DB364"},
+					{"name": ">5%", "key": "INDEX2", "color": "#3DB364"},
+					{"name": "跌停", "key": "IND5", "color": "#3DB364"},
 				]
 
+				let categories = []
+				let values = []
 				names.forEach(function(item) {
-					result.data.push({"name": item.name, "value": data[item.key]})
+					// result.data.push({"name": item.name, "value": data[item.key]})
+					categories.push(item.name)
+					values.push({value: data[item.key], color: item.color})
 				})
+				
+				// 构建图表数据
+				let chartData = {
+					categories: categories,
+					series: [
+						{name: "数量", data: values}
+					]
+				}
+				that.marketOverviewData = JSON.parse(JSON.stringify(chartData))
 			}
 		})
-		
-		return result
 	}
 
 	export default {
@@ -130,29 +160,46 @@
 					{name: "中证500", point: "-", change: "-", percent: "-"},
 					{name: "上证50", point: "-", change: "-", percent: "-"},
 					{name: "科创50", point: "-", change: "-", percent: "-"},
-					{name: "北证300", point: "-", change: "-", percent: "-"}
-				]
+					{name: "北证50", point: "-", change: "-", percent: "-"}
+				],
+				marketOverviewOpts: {
+					legend: {
+						show: false
+					},
+					xAxis: {
+						fontSize: 12,
+						fontColor: "#000000"
+					},
+					yAxis: {
+						disabled: true,
+						disableGrid: true
+					},
+					extra: {
+						tooltip: {
+							showBox: false,
+							legendShow: false
+						},
+						column: {
+							width: 16,
+							barBorderRadius: [4, 4, 0, 0],
+							activeBgOpacity: 0
+						}
+					}
+				},
+				marketOverviewData: {}
 			}
 		},
 		onLoad() {
-			let that = this
+			const that = this
 
 			queryIndexs(that)
+			queryMarketTrends(that)
+
 			setInterval(function() {
-				const now = new Date()
-
-				const day = now.getDay()
-				if(day == 0 || day == 6) {
-					return
+				if(queryMarketStatus()) {
+					queryIndexs(that)
+					queryMarketTrends(that)
 				}
-
-				const currentHour = now.getHours()
-				const currentMinute = now.getMinutes()
-				if((currentHour >= 0 && currentHour <=8) || currentHour == 12 || currentHour >= 15 || (currentHour == 11 && currentMinute >= 30)) {
-					return
-				}
-
-				queryIndexs(that)
 			}, 5000)
 		},
 		methods: {
@@ -239,7 +286,7 @@
 	}
 	.market {
 		margin: 4pt 8pt 8pt 8pt;
-		height: 180pt;
+		padding-bottom: 8pt;
 		background-color: white;
 		border-radius: 4pt;
 		.title {
@@ -248,7 +295,7 @@
 			flex-direction: row;
 			align-items: center;
 			color: #333333;
-			font-size: 12pt;
+			font-size: 11pt;
 			font-weight: bold;
 			.title_prefix {
 				width: 6pt;
@@ -264,6 +311,9 @@
 				margin-left: auto;
 				margin-right: 8pt;
 			}
+		}
+		.content {
+			height: 100pt;
 		}
 	}
 </style>
