@@ -34,6 +34,24 @@
 			<qiun-data-charts type="column" v-bind:opts="marketOverviewOpts" v-bind:chart-data="marketOverviewData"/>
 		</view>
 	</view>
+	<view class="market currency">
+		<view class="title">
+			<view class="title_prefix"></view>
+			<text>货币风向</text>
+			<image class="help" src="/static/common/help.png"></image>
+		</view>
+		<view class="content">
+			<view class="switch_area">
+				<view class="switch_items">
+					<text class="item" v-on:click="changeCurrencyType('美元')" v-bind:class="{'switch_tab': currencyType == '美元'}">美元/人民币</text>
+					<text class="item" v-on:click="changeCurrencyType('国债')" v-bind:class="{'switch_tab': currencyType == '国债'}">10年期国债收益率(%)</text>
+				</view>
+			</view>
+			<view class="chart_area">
+				<qiun-data-charts type="mix" v-bind:opts="currencyOverviewOpts" v-bind:chart-data="currencyOverviewData"/>
+			</view>
+		</view>
+	</view>
 	
 	<!-- <view class="content">
 	<view class="info">
@@ -119,13 +137,13 @@
 				// 构建 key 和 name 的关系
 				var names = [
 					{"name": "涨停", "key": "IND3", "color": "#F05656"},
-					{"name": ">5%", "key": "INDEX8", "color": "#F05656"},
-					{"name": "5-1%", "key": "INDEX7", "color": "#F05656"},
-					{"name": "1-0%", "key": "INDEX6", "color": "#F05656"},
+					{"name": ">5", "key": "INDEX8", "color": "#F05656"},
+					{"name": "5-1", "key": "INDEX7", "color": "#F05656"},
+					{"name": "1-0", "key": "INDEX6", "color": "#F05656"},
 					{"name": "平", "key": "INDEX5", "color": "#A8A8A8"},
-					{"name": "0-1%", "key": "INDEX4", "color": "#3DB364"},
-					{"name": "1-5%", "key": "INDEX3", "color": "#3DB364"},
-					{"name": ">5%", "key": "INDEX2", "color": "#3DB364"},
+					{"name": "0-1", "key": "INDEX4", "color": "#3DB364"},
+					{"name": "1-5", "key": "INDEX3", "color": "#3DB364"},
+					{"name": ">5", "key": "INDEX2", "color": "#3DB364"},
 					{"name": "跌停", "key": "IND5", "color": "#3DB364"},
 				]
 
@@ -141,10 +159,43 @@
 				let chartData = {
 					categories: categories,
 					series: [
-						{name: "数量", data: values}
+						{name: "数量", data: values, textSize: 12}
 					]
 				}
 				that.marketOverviewData = JSON.parse(JSON.stringify(chartData))
+			}
+		})
+	}
+
+	// 查询货币风向（国债、美元）
+	function querycurrencyTrends(that, type) {
+		let key = "YIELD"
+		let title = "十年期国债收益率"
+		if(type == "美元") {
+			key = "USDCNH_CLOSE"
+			title = "美元/人民币"
+			that.currencyOverviewOpts.yAxis.data[0].title = title
+		}
+		uni.request({
+			url: `https://datacenter.eastmoney.com/securities/api/data/v1/get?reportName=RPT_DMSK_WINDVANE_CURRENCY&columns=TRADE_DATE,${key},SZZS_CLOSE&sortTypes=1&sortColumns=TRADE_DATE&source=securities&client=APP`,
+			success(res) {
+				let categories = []
+				let leftValue = []
+				let rightValue = []
+				res.data.result.data.forEach(function(item) {
+					categories.push(item["TRADE_DATE"].split(" ")[0])
+					leftValue.push(item[key])
+					rightValue.push(item["SZZS_CLOSE"])
+				})
+				// 构建图表数据
+				let chartData = {
+					categories: categories,
+					series: [
+						{index: 0, type: "line", style: "curve", name: title, data: leftValue, color: "#3381E3"},
+						{index: 1, type: "line", style: "curve", name: "上证指数", data: rightValue, color: "#FAA42A"}
+					]
+				}
+				that.currencyOverviewData = JSON.parse(JSON.stringify(chartData))
 			}
 		})
 	}
@@ -163,12 +214,14 @@
 					{name: "北证50", point: "-", change: "-", percent: "-"}
 				],
 				marketOverviewOpts: {
+					update: true,
 					legend: {
 						show: false
 					},
 					xAxis: {
 						fontSize: 12,
-						fontColor: "#000000"
+						fontColor: "#000000",
+						marginTop: 6
 					},
 					yAxis: {
 						disabled: true,
@@ -186,7 +239,37 @@
 						}
 					}
 				},
-				marketOverviewData: {}
+				currencyType: "美元",
+				marketOverviewData: {},
+				currencyOverviewOpts: {
+					update: true,
+					fontSize: 11,
+					dataLabel: false,
+					xAxis: {
+						labelCount: 3,
+						fontSize: 12,
+						fontColor: "#000000",
+						marginTop: 6
+					},
+					yAxis: {
+						showTitle: false,
+						data: [
+							{position: "left", title: "十年期国债收益率"},
+							{position: "right", title: "上证指数"}
+						]
+					},
+					extra: {
+						line: {
+							animation: "horizontal"
+						},
+						mix: {
+							line: {
+								width: 1.5
+							}
+						}
+					}
+				},
+				currencyOverviewData: {}
 			}
 		},
 		onLoad() {
@@ -194,6 +277,7 @@
 
 			queryIndexs(that)
 			queryMarketTrends(that)
+			querycurrencyTrends(that, "美元")
 
 			setInterval(function() {
 				if(queryMarketStatus()) {
@@ -207,6 +291,10 @@
 				uni.navigateTo({
 					url: "/pages/index/search"
 				})
+			},
+			changeCurrencyType(type) {
+				this.currencyType = type
+				querycurrencyTrends(this, type)
 			}
 		}
 	}
@@ -218,6 +306,11 @@
 	}
 	.down_c {
 		color: #3DB364 !important;
+	}
+	
+	.switch_tab {
+		color: #000000 !important;
+		background-color: #FFFFFF;
 	}
 
 	.search {
@@ -314,6 +407,33 @@
 		}
 		.content {
 			height: 100pt;
+		}
+	}
+	.currency {
+		.content {
+			height: 180pt;
+			.switch_area {
+				font-size: 10pt;
+				display: flex;
+				flex-direction: row;
+				justify-content: center;
+				.switch_items {
+					background-color: #F2F2F2;
+					padding: 6pt 2pt;
+					border-radius: 4pt;
+					.item {
+						border-radius: 4pt;
+						padding: 4pt;
+						color: #A8A8A8;
+						&:last-child {
+							margin-left: 4pt;
+						}
+					}
+				}
+			}
+			.chart_area {
+				height: 160pt;
+			}
 		}
 	}
 </style>
