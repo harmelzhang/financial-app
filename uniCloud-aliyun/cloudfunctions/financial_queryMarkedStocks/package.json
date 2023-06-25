@@ -1,5 +1,5 @@
 {
-  "name": "queryUserMarkedStocks",
+  "name": "financial_queryMarkedStocks",
   "dependencies": {},
   "extensions": {
     "uni-cloud-jql": {}

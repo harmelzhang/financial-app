@@ -12,24 +12,24 @@
 			"description": "ID，系统自动生成"
 		},
 		"openid": {
-		    "title": "OpenID",
-		    "bsonType": "string",
-		    "description": "用户ID"
+			"title": "OpenID",
+			"bsonType": "string",
+			"description": "用户ID"
 		},
 		"nickname": {
 			"title": "昵称",
-		    "bsonType": "string",
-		    "description": "昵称"
+			"bsonType": "string",
+			"description": "昵称"
 		},
 		"avatar": {
 			"title": "头像",
-		    "bsonType": "string",
-		    "description": "头像地址"
+			"bsonType": "string",
+			"description": "头像地址"
 		},
 		"join_time": {
-		    "title": "加入时间",
-		    "bsonType": "int",
-		    "description": "用户首次登陆时的时间戳",
+			"title": "加入时间",
+			"bsonType": "int",
+			"description": "用户首次登陆时的时间戳",
 			"forceDefaultValue": {
 				"$env": "now"
 			}

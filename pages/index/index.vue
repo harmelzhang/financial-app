@@ -31,7 +31,44 @@
 			<image class="help" src="/static/common/help.png"></image>
 		</view>
 		<view class="content">
-			<qiun-data-charts type="column" v-bind:opts="marketOverviewOpts" v-bind:chart-data="marketOverviewData"/>
+			<qiun-data-charts v-bind:canvas2d="true" canvasId="gFnpbLRuTmVXzchYNeVYRFuvBQFsnmiV" v-bind:animation="false" type="column" v-bind:opts="marketOverviewOpts" v-bind:chart-data="marketOverviewData"/>
+		</view>
+	</view>
+	<view class="market currency">
+		<view class="title">
+			<view class="title_prefix"></view>
+			<text>沪深港通</text>
+			<image class="help" src="/static/common/help.png"></image>
+		</view>
+		<view class="content">
+			<view class="switch_area">
+				<view class="switch_items">
+					<text class="item" v-on:click="changeFundType('北向')" v-bind:class="{'switch_tab': fundType == '北向'}">北向资金</text>
+					<text class="item" v-on:click="changeFundType('南向')" v-bind:class="{'switch_tab': fundType == '南向'}">南向资金</text>
+				</view>
+			</view>
+			<view class="chart_area">
+				<qiun-data-charts v-bind:canvas2d="true" canvasId="SrzaviNMWZDJfNvVAFUqPdMBFJOFkQVQ" v-bind:animation="false" type="line" v-bind:opts="fundOverviewOpts" v-bind:chart-data="fundOverviewData"/>
+			</view>
+		</view>
+	</view>
+	<view class="market currency">
+		<view class="title">
+			<view class="title_prefix"></view>
+			<text>估值分析</text>
+			<image class="help" src="/static/common/help.png"></image>
+		</view>
+		<view class="content">
+			<view class="switch_area">
+				<view class="switch_items">
+					<text class="item" v-on:click="changeValuationType('市盈率')" v-bind:class="{'switch_tab': valuationType == '市盈率'}">市盈率TTM</text>
+					<text class="item" v-on:click="changeValuationType('市净率')" v-bind:class="{'switch_tab': valuationType == '市净率'}">市净率MRQ</text>
+					<text class="item" v-on:click="changeValuationType('总市值')" v-bind:class="{'switch_tab': valuationType == '总市值'}">总市值/GDP</text>
+				</view>
+			</view>
+			<view class="chart_area">
+				<qiun-data-charts v-bind:canvas2d="true" canvasId="CMhaRxRNGCxmqZjkDlPGzttSgIgKoAsd" v-bind:animation="false" type="line" v-bind:opts="valuationOverviewOpts" v-bind:chart-data="valuationOverviewData"/>
+			</view>
 		</view>
 	</view>
 	<view class="market currency">
@@ -48,19 +85,13 @@
 				</view>
 			</view>
 			<view class="chart_area">
-				<qiun-data-charts type="mix" v-bind:opts="currencyOverviewOpts" v-bind:chart-data="currencyOverviewData"/>
+				<qiun-data-charts v-bind:canvas2d="true" canvasId="iXHaBRLuazvVjLfggUKwNITfhcKxgWBR" v-bind:animation="false" type="mix" v-bind:opts="currencyOverviewOpts" v-bind:chart-data="currencyOverviewData"/>
 			</view>
 		</view>
 	</view>
 	
-	<!-- <view class="content">
-	<view class="info">
-		本应用数据来源于互联网公开信息汇总，尚未经过严格校验，仅供使用者查阅参考并不构成投资建议，投资者需自主决策并独立承担投资风险！
-	</view>
-		<view class="disclaimer">
-			
-		</view>
-	</view> -->
+	<!-- 底部站位，解决小程序端太贴底部的问题 -->
+	<view style="height: 1pt;"></view>
 </template>
 
 <script>
@@ -167,8 +198,107 @@
 		})
 	}
 
+	// 查询南北向资金情况
+	function queryFundTrends(that, type) {
+		let fields = "f1,f3"
+		let valueKey = "s2n"
+		if(type == "南向") {
+			fields = "f2,f4"
+			valueKey = "n2s"
+		}
+		
+		uni.request({
+			url: `https://push2.eastmoney.com/api/qt/kamtbs.rtmin/get?dpt=app.hsgt&fields1=${fields}&fields2=f51,f54,f58,f62`,
+			success(res) {
+				let categories = []
+				let shanghai = []  // 沪股通
+				let shenzhen = []  // 深股通
+				let fund = []
+				res.data.data[valueKey].forEach(function(item) {
+					let values = item.split(",")
+					
+					categories.push(values[0])
+					shanghai.push(values[1]=="-"?null:(parseFloat(values[1]) / 10000).toFixed(2))
+					shenzhen.push(values[2]=="-"?null:(parseFloat(values[2]) / 10000).toFixed(2))
+					fund.push(values[3]=="-"?null:(parseFloat(values[3]) / 10000).toFixed(2))
+				})
+				// 构建图表数据
+				let chartData = {
+					categories: categories,
+					series: [
+						{name: `${type}资金`, data: fund, color: "#487FDA"},
+						{name: "沪股通", data: shanghai, color: "#EAAA47"},
+						{name: "深股通", data: shenzhen, color: "#ED7B49"},
+					]
+				}
+				that.fundOverviewData = JSON.parse(JSON.stringify(chartData))
+			}
+		})
+	}
+
+	// 查询估值（市盈率、市净率、总市值）
+	function queryValuationTrends(that, type) {
+		let url = 'https://datacenter.eastmoney.com/securities/api/data/v1/get?reportName=RPT_REVALUE_TREND&columns=TRADE_DATE,AVG_VALUE,PERCENTILE_30,PERCENTILE_50,PERCENTILE_70&filter=(INDICATOR_TYPE="1")&sortTypes=1&sortColumns=TRADE_DATE&source=securities&client=APP'
+		let title = type
+		let key = "AVG_VALUE"
+		if(type == "市净率") {
+			url = 'https://datacenter.eastmoney.com/securities/api/data/v1/get?reportName=RPT_REVALUE_TREND&columns=TRADE_DATE,AVG_VALUE,PERCENTILE_30,PERCENTILE_50,PERCENTILE_70&filter=(INDICATOR_TYPE="2")&sortTypes=1&sortColumns=TRADE_DATE&source=securities&client=APP'
+		} else if(type == "总市值") {
+			key = "INDICATOR_VALUE"
+			title = "总市值/GDP"
+			url = 'https://datacenter.eastmoney.com/securities/api/data/v1/get?reportName=RPT_MKTVALUE_STATISTICS&columns=TRADE_DATE,INDICATOR_VALUE,SCI_CLOSE_PRICE&filter=(INDICATOR_TYPE="1")&sortTypes=1&sortColumns=TRADE_DATE&source=securities&client=APP'
+		}
+
+		that.valuationOverviewOpts.yAxis.data = that.valuationOverviewOpts.yAxis.data.slice(0, 1)
+		that.valuationOverviewOpts.yAxis.data[0].title = title
+		if(type == "总市值") {
+			that.valuationOverviewOpts.yAxis.data.push({position: "right", title: "上证指数"})
+			that.valuationOverviewOpts.padding = [15, 15, 0, 15]
+		} else {
+			that.valuationOverviewOpts.padding = [15, 45, 0, 25]
+		}
+
+		uni.request({
+			url: url,
+			success(res) {
+				let categories = []
+				let leftValue = []
+				let rightValue = []
+				let value30 = []
+				let value50 = []
+				let value70 = []
+				res.data.result.data.forEach(function(item) {
+					categories.push(item["TRADE_DATE"].split(" ")[0])
+					leftValue.push(item[key])
+					if(type == "总市值") {
+						rightValue.push(item["SCI_CLOSE_PRICE"])
+					} else {
+						value30.push(item["PERCENTILE_30"])
+						value50.push(item["PERCENTILE_50"])
+						value70.push(item["PERCENTILE_70"])
+					}
+				})
+				// 构建图表数据
+				let chartData = {
+					categories: categories,
+					series: [
+						{index: 0, type: "line", style: "curve", name: title, data: leftValue, color: "#3381E3"}
+					]
+				}
+				if(type == "总市值") {
+					chartData.series.push({index: 1, type: "line", style: "curve", name: "上证指数", data: rightValue, color: "#FAA42A"})
+				} else {
+					chartData.series.push({lineType: "dash", name: "30分位", data: value30, color: "#3DB364"})
+					chartData.series.push({lineType: "dash", name: "50分位", data: value50, color: "#FAA42A"})
+					chartData.series.push({lineType: "dash", name: "70分位", data: value70, color: "#F05656"})
+				}
+				that.valuationOverviewData = JSON.parse(JSON.stringify(chartData))
+			}
+		})
+	}
+
 	// 查询货币风向（国债、美元）
-	function querycurrencyTrends(that, type) {
+	function queryCurrencyTrends(that, type) {
 		let key = "YIELD"
 		let title = "十年期国债收益率"
 		if(type == "美元") {
@@ -239,8 +369,70 @@
 						}
 					}
 				},
-				currencyType: "美元",
 				marketOverviewData: {},
+				fundType: "北向",
+				fundOverviewOpts: {
+					padding: [15, 25, 0, 10],
+					update: true,
+					fontSize: 11,
+					dataLabel: false,
+					dataPointShape: false,
+					xAxis: {
+						labelCount: 3,
+						fontSize: 12,
+						fontColor: "#000000",
+						marginTop: 6
+					},
+					extra: {
+						line: {
+							type: "curve",
+							width: 1.5
+						},
+						tooltip: {
+							bgColor: "#FFFFFF",
+							bgOpacity: 1,
+							borderWidth: 1,
+							borderRadius: 5,
+							borderColor: "#C8C8C8",
+							fontColor: "#000000"
+						}
+					}
+				},
+				fundOverviewData: {},
+				valuationType: "市盈率",
+				valuationOverviewOpts: {
+					update: true,
+					fontSize: 11,
+					dataLabel: false,
+					dataPointShape: false,
+					xAxis: {
+						labelCount: 3,
+						fontSize: 12,
+						fontColor: "#000000",
+						marginTop: 6
+					},
+					yAxis: {
+						showTitle: false,
+						data: [
+							{position: "left", title: "值"}
+						]
+					},
+					extra: {
+						line: {
+							width: 1.5
+						},
+						tooltip: {
+							bgColor: "#FFFFFF",
+							bgOpacity: 1,
+							borderWidth: 1,
+							borderRadius: 5,
+							borderColor: "#C8C8C8",
+							fontColor: "#000000"
+						}
+					}
+				},
+				valuationOverviewData: {},
+				currencyType: "美元",
 				currencyOverviewOpts: {
 					update: true,
 					fontSize: 11,
@@ -254,18 +446,23 @@
 					yAxis: {
 						showTitle: false,
 						data: [
-							{position: "left", title: "十年期国债收益率"},
+							{position: "left", title: "值"},
 							{position: "right", title: "上证指数"}
 						]
 					},
 					extra: {
-						line: {
-							animation: "horizontal"
-						},
 						mix: {
 							line: {
 								width: 1.5
 							}
+						},
+						tooltip: {
+							bgColor: "#FFFFFF",
+							bgOpacity: 1,
+							borderWidth: 1,
+							borderRadius: 5,
+							borderColor: "#C8C8C8",
+							fontColor: "#000000"
 						}
 					}
 				},
@@ -277,12 +474,15 @@
 
 			queryIndexs(that)
 			queryMarketTrends(that)
-			querycurrencyTrends(that, "美元")
+			queryFundTrends(that, "北向")
+			queryValuationTrends(that, "市盈率")
+			queryCurrencyTrends(that, "美元")
 
 			setInterval(function() {
 				if(queryMarketStatus()) {
 					queryIndexs(that)
 					queryMarketTrends(that)
+					queryFundTrends(that, that.fundType)
 				}
 			}, 5000)
 		},
@@ -292,9 +492,17 @@
 					url: "/pages/index/search"
 				})
 			},
+			changeFundType(type) {
+				this.fundType = type
+				queryFundTrends(this, type)
+			},
+			changeValuationType(type) {
+				this.valuationType = type
+				queryValuationTrends(this, type)
+			},
 			changeCurrencyType(type) {
 				this.currencyType = type
-				querycurrencyTrends(this, type)
+				queryCurrencyTrends(this, type)
 			}
 		}
 	}

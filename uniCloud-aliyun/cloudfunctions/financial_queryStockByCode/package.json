@@ -1,5 +1,5 @@
 {
-  "name": "queryStockByCode",
+  "name": "financial_queryStockByCode",
   "dependencies": {},
   "extensions": {
     "uni-cloud-jql": {}

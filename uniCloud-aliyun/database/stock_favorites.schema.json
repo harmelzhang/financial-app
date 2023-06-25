@@ -1,34 +1,34 @@
 {
-  "bsonType": "object",
-  "required": [],
-  "permission": {
-    "read": true,
-    "create": true,
-    "update": false,
-    "delete": true
-  },
-  "properties": {
-    "_id": {
-      "description": "ID，系统自动生成"
-    },
-    "openid": {
-        "title": "OpenID",
-        "bsonType": "string",
-        "description": "用户ID"
-    },
-	"stocks": {
-		"title": "股票",
-		"bsonType": "string",
-		"foreignKey": "stock.code",
-		"description": "股票信息"
+	"bsonType": "object",
+	"required": [],
+	"permission": {
+		"read": true,
+		"create": true,
+		"update": false,
+		"delete": true
 	},
-    "create_time": {
-        "title": "创建时间",
-        "bsonType": "int",
-        "description": "用户标记时的时间戳",
-		"forceDefaultValue": {
-			"$env": "now"
+	"properties": {
+		"_id": {
+			"description": "ID，系统自动生成"
+		},
+		"openid": {
+			"title": "OpenID",
+			"bsonType": "string",
+			"description": "用户ID"
+		},
+		"stocks": {
+			"title": "股票",
+			"bsonType": "string",
+			"foreignKey": "stock.code",
+			"description": "股票信息"
+		},
+		"create_time": {
+			"title": "创建时间",
+			"bsonType": "int",
+			"description": "用户标记时的时间戳",
+			"forceDefaultValue": {
+				"$env": "now"
+			}
 		}
-    }
-  }
+	}
 }

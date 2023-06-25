@@ -1,5 +1,5 @@
 {
-  "name": "unmarkStock",
+  "name": "financial_unmarkStock",
   "dependencies": {},
   "extensions": {
     "uni-cloud-jql": {}
