@@ -12,6 +12,14 @@
 				"navigationBarTextStyle": "black"
 			}
 		},
+		
+		// 要闻
+		{
+			"path": "pages/news/news",  // 搜索
+			"style": {
+				"navigationBarTitleText": "要闻"
+			}
+		},
 
 		// 自选
 		{
@@ -74,6 +82,12 @@
 				"text": "首页",
 				"iconPath": "static/tabbar/home.png",
 				"selectedIconPath": "static/tabbar/home_selected.png"
+			},
+			{
+				"pagePath": "pages/news/news",
+				"text": "要闻",
+				"iconPath": "static/tabbar/news.png",
+				"selectedIconPath": "static/tabbar/news_selected.png"
 			},
 			{
 				"pagePath": "pages/favorite/favorite",
